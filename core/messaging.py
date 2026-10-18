@@ -71,6 +71,7 @@ def list_conversations(user_id: int) -> list[dict]:
     rows = db.get_conn().execute(
         """SELECT c.*, l.title AS listing_title, l.city AS listing_city, l.status AS listing_status,
                   u.full_name AS other_name, u.id AS other_id, u.is_verified AS other_verified,
+                  u.account_type AS other_type,
                   (SELECT body FROM messages m WHERE m.conversation_id = c.id
                      ORDER BY m.created_at DESC, m.id DESC LIMIT 1) AS last_body,
                   (SELECT created_at FROM messages m WHERE m.conversation_id = c.id

@@ -34,12 +34,14 @@ def trust_score(listing: dict, open_reports: int | None = None) -> int:
         ).fetchone()["c"]
 
     owner = conn.execute(
-        "SELECT is_verified FROM users WHERE id = ?", (listing["owner_id"],)
+        "SELECT is_verified, account_type FROM users WHERE id = ?", (listing["owner_id"],)
     ).fetchone()
 
     score = 60
     if owner and owner["is_verified"]:
-        score += 22
+        score += 22          # étudiant vérifié via e-mail universitaire @ac.ma
+    elif owner and owner["account_type"] == "proprietaire":
+        score += 10          # propriétaire ou agent identifié (téléphone + documents)
     if listing.get("contact_phone"):
         score += 8
     if listing.get("image_url"):
@@ -64,7 +66,7 @@ def trust_color(score: int) -> str:
 def _base_query() -> str:
     return """
         SELECT l.*, u.full_name AS owner_name, u.is_verified AS owner_verified,
-               u.university AS owner_university
+               u.account_type AS owner_type, u.university AS owner_university
         FROM listings l
         JOIN users u ON u.id = l.owner_id
     """

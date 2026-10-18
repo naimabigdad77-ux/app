@@ -11,7 +11,22 @@ from pathlib import Path
 import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
+
+
+def _default_db_dir() -> Path:
+    """Dossier de stockage de la base.
+
+    Priorité à la variable d'environnement `EDUDAR_DB_DIR` (utile pour placer la base
+    ailleurs, par exemple hors d'un dossier synchronisé) ; sinon `<projet>/data`,
+    ce qui fonctionne aussi sur Streamlit Community Cloud.
+    """
+    override = os.environ.get("EDUDAR_DB_DIR")
+    if override:
+        return Path(override).expanduser()
+    return BASE_DIR / "data"
+
+
+DATA_DIR = _default_db_dir()
 DB_PATH = DATA_DIR / "edudar.db"
 
 # Domaines académiques marocains acceptés pour la vérification du statut étudiant
@@ -77,9 +92,14 @@ GENDER_PREFS = ["Tous", "Filles", "Garçons"]
 def connect(path: Path | str = DB_PATH) -> sqlite3.Connection:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(path), check_same_thread=False)
+    conn = sqlite3.connect(str(path), check_same_thread=False, timeout=30)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    try:
+        # Écritures concurrentes sûres entre plusieurs onglets Streamlit
+        conn.execute("PRAGMA journal_mode=WAL")
+    except sqlite3.Error:
+        pass
     return conn
 
 
@@ -132,6 +152,7 @@ CREATE TABLE IF NOT EXISTS users (
     university    TEXT,
     city          TEXT,
     bio           TEXT,
+    account_type  TEXT    NOT NULL DEFAULT 'etudiant',   -- 'etudiant' | 'proprietaire'
     is_verified   INTEGER NOT NULL DEFAULT 0,
     verify_code   TEXT,
     verify_until  TEXT,
@@ -203,23 +224,30 @@ CREATE TABLE IF NOT EXISTS favorites (
 # Données de démonstration
 # --------------------------------------------------------------------------- #
 SEED_USERS = [
-    # (nom, email, ville, université, tél, bio, vérifié)
+    # (nom, email, ville, université, tél, bio, vérifié, type de compte)
     ("Salma Benali", "salma.benali@um5.ac.ma", "Rabat", UNIVERSITIES[0],
-     "0661-245187", "Étudiante en 2e année droit, je cherche une coloc calme et studieuse.", 1),
+     "0661-245187", "Étudiante en 2e année droit, je cherche une coloc calme et studieuse.", 1, "etudiant"),
     ("Youssef El Amrani", "youssef.amrani@ufc.ac.ma", "Casablanca", UNIVERSITIES[1],
-     "0662-883410", "Propriétaire d'un studio que je loue moi-même, sans agence.", 1),
+     "0662-883410", "Étudiant en gestion, je loue moi-même mon studio sans agence.", 1, "etudiant"),
     ("Imane Chraibi", "imane.chraibi@ensias.ac.ma", "Rabat", UNIVERSITIES[6],
-     "0670-112233", "Élève ingénieure ENSIAS, je libère ma chambre en colocation.", 1),
+     "0670-112233", "Élève ingénieure ENSIAS, je libère ma chambre en colocation.", 1, "etudiant"),
     ("Mehdi Ouazzani", "mehdi.ouazzani@uca.ac.ma", "Marrakech", UNIVERSITIES[2],
-     "0655-778899", "Cherche une chambre proche de la fac, budget serré mais sérieux.", 1),
+     "0655-778899", "Cherche une chambre proche de la fac, budget serré mais sérieux.", 1, "etudiant"),
     ("Nour Ait Baha", "nour.aitbaha@usmba.ac.ma", "Fès", UNIVERSITIES[3],
-     "0677-456123", "En médecine, je cherche colocataire fille pour appartement partagé.", 1),
+     "0677-456123", "En médecine, je cherche colocataire fille pour appartement partagé.", 1, "etudiant"),
     ("Anas Berrada", "anas.berrada@emi.ac.ma", "Casablanca", "EMI - Casablanca",
-     "0663-990011", "Élève ingénieur EMI, je propose une chambre dans mon appart.", 1),
-    ("Khadija Mernissi", "khadija.mernissi@gmail.com", "Agadir", "Autre école / université",
-     "0658-221100", "Compte non vérifié — profil de démonstration.", 0),
+     "0663-990011", "Élève ingénieur EMI, je propose une chambre dans mon appart.", 1, "etudiant"),
+    ("Khadija Mernissi", "khadija.mernissi@gmail.com", "Agadir", None,
+     "0658-221100", "Étudiante indépendante — profil de démonstration non vérifié.", 0, "etudiant"),
     ("Hamza Tazi", "hamza.tazi@ump.ac.ma", "Oujda", UNIVERSITIES[4],
-     "0669-341278", "Recherche studio pas cher à Oujda pour la rentrée.", 1),
+     "0669-341278", "Recherche studio pas cher à Oujda pour la rentrée.", 1, "etudiant"),
+    # --- Propriétaires et agents : pas nécessairement des étudiants ---
+    ("Fatima Zahra El Idrissi", "fatimazahra.elidrissi@gmail.com", "Casablanca", None,
+     "0661-775544", "Propriétaire directe : je loue mes studios à des étudiants, "
+     "sans agence et sans commission cachée.", 0, "proprietaire"),
+    ("Nour Immobilier — agent", "contact@nour-immobilier.ma", "Tanger", None,
+     "0539-448822", "Agent immobilier agréé à Tanger. Je représente des propriétaires "
+     "particuliers : honoraires annoncés à l'avance et contrat conforme.", 0, "proprietaire"),
 ]
 
 SEED_LISTINGS = [
@@ -337,6 +365,7 @@ SEED_CONVERSATIONS = [
 def init_db(force_reseed: bool = False) -> None:
     conn = get_conn()
     conn.executescript(SCHEMA)
+    _migrate(conn)
 
     has_users = conn.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
     if has_users and not force_reseed:
@@ -346,13 +375,24 @@ def init_db(force_reseed: bool = False) -> None:
     conn.commit()
 
 
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Ajoute les colonnes manquantes aux bases créées par une version antérieure."""
+    users_cols = {row["name"] for row in conn.execute("PRAGMA table_info(users)")}
+    if "account_type" not in users_cols:
+        conn.execute(
+            "ALTER TABLE users ADD COLUMN account_type TEXT NOT NULL DEFAULT 'etudiant'"
+        )
+        conn.commit()
+
+
 def _seed(conn: sqlite3.Connection) -> None:
-    for name, email, city, uni, phone, bio, verified in SEED_USERS:
+    for name, email, city, uni, phone, bio, verified, account_type in SEED_USERS:
         conn.execute(
             """INSERT INTO users (full_name, email, password_hash, phone, university,
-                                  city, bio, is_verified, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?)""",
-            (name, email, hash_password("etudiant2026"), phone, uni, city, bio, verified, _days_ago(40)),
+                                  city, bio, account_type, is_verified, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (name, email, hash_password("etudiant2026"), phone, uni, city, bio,
+             account_type, verified, _days_ago(40)),
         )
 
     for row in SEED_LISTINGS:

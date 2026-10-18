@@ -22,9 +22,9 @@ FR = {
 
     # --- Accueil ---
     "home.title": "Trouve ton logement étudiant, sans agence et sans frais abusifs.",
-    "home.sub": "Edu-Dar met en direct les étudiants marocains entre eux : annonces vérifiées, "
-                "colocation facile, contact direct propriétaire → étudiant. Zéro commission, "
-                "zéro intermédiaire.",
+    "home.sub": "Edu-Dar met en direct les étudiants marocains et les propriétaires ou agents de "
+                "confiance : annonces vérifiées, colocation facile, contact direct. Zéro "
+                "commission cachée, zéro intermédiaire inutile.",
     "home.tag1": "0 DH de commission",
     "home.tag2": "Vérification e-mail @ac.ma",
     "home.tag3": "Signalement d'arnaques",
@@ -39,7 +39,8 @@ FR = {
     "home.how": "Comment ça marche ?",
     "home.how.hint": "3 étapes, 0 intermédiaire",
     "home.step1.t": "Vérifie ton statut étudiant",
-    "home.step1.d": "Inscris-toi avec ton adresse universitaire (@ac.ma) pour obtenir le badge vérifié qui rassure les autres étudiants.",
+    "home.step1.d": "Inscris-toi avec ton e-mail universitaire (@ac.ma) pour obtenir le badge vérifié. "
+                    "Les propriétaires et agents s'inscrivent avec n'importe quel e-mail.",
     "home.step2.t": "Publie ou cherche",
     "home.step2.d": "Décris ton logement ou ta recherche : ville, quartier, budget, type de coloc, préférences.",
     "home.step3.t": "Contacte directement",
@@ -54,7 +55,7 @@ FR = {
 
     # --- Annonces ---
     "l.title": "Annonces de logement",
-    "l.sub": "Filtre, compare, contacte directement l'étudiant propriétaire.",
+    "l.sub": "Filtre, compare, contacte directement le propriétaire ou l'agent — étudiant ou non.",
     "l.search": "Rechercher (mot-clé, quartier, université…)",
     "l.city": "Ville",
     "l.type": "Type de logement",
@@ -105,6 +106,7 @@ FR = {
     "l.about_owner": "Le propriétaire",
     "l.verified_badge": "Statut étudiant vérifié",
     "l.unverified_badge": "Compte non vérifié",
+    "l.owner_badge": "Propriétaire / Agent",
     "l.owner_listings": "{n} annonce(s)",
     "l.status_loue": "Déjà louée",
     "l.status_retire": "Retirée",
@@ -156,7 +158,11 @@ FR = {
     "a.name": "Nom et prénom",
     "a.email": "Adresse e-mail",
     "a.email_ph": "prenom.nom@um5.ac.ma",
-    "a.email_help": "Utilise ton e-mail universitaire finissant par .ac.ma pour obtenir le badge vérifié.",
+    "a.email_help": "Le badge « étudiant vérifié » demande un e-mail universitaire (.ac.ma). "
+                    "Les propriétaires et agents peuvent s'inscrire avec n'importe quel e-mail.",
+    "a.account_type": "Je m'inscris en tant que",
+    "a.type_etudiant": "Étudiant(e)",
+    "a.type_proprietaire": "Propriétaire ou agent immobilier",
     "a.password": "Mot de passe",
     "a.password2": "Confirmer le mot de passe",
     "a.phone": "Téléphone",
@@ -166,7 +172,8 @@ FR = {
     "a.do_reg": "Créer mon compte",
     "a.err_credentials": "E-mail ou mot de passe incorrect.",
     "a.err_exists": "Un compte existe déjà avec cet e-mail.",
-    "a.err_domain": "Cet e-mail n'est pas une adresse universitaire marocaine (@ac.ma).",
+    "a.err_domain": "En tant qu'étudiant(e), utilise ton e-mail universitaire (.ac.ma). "
+                    "Sinon, inscris-toi comme propriétaire ou agent.",
     "a.err_match": "Les deux mots de passe ne correspondent pas.",
     "a.err_short": "Le mot de passe doit contenir au moins 6 caractères.",
     "a.welcome": "Bienvenue {name} !",
@@ -187,10 +194,13 @@ FR = {
     "v.resend": "Régénérer un code",
     "v.demo": "Mode démonstration : le code s'affiche ci-dessous car aucun serveur de messagerie n'est connecté.",
     "v.not_eligible": "Cette adresse n'est pas éligible à la vérification automatique (@ac.ma).",
+    "v.owner_info": "Les propriétaires et agents sont identifiés par leur téléphone et leurs "
+                    "documents (contrat, quittance de loyer). Le badge « étudiant vérifié » "
+                    "concerne uniquement les membres étudiants.",
 
     # --- Messagerie ---
     "m.title": "Messagerie",
-    "m.sub": "Discute directement avec l'étudiant propriétaire — sans agence, sans commission.",
+    "m.sub": "Discute directement avec le propriétaire ou l'agent — sans intermédiaire, sans commission cachée.",
     "m.need_login": "Connecte-toi pour accéder à ta messagerie.",
     "m.conversations": "Conversations",
     "m.empty": "Aucune conversation pour l'instant.",
@@ -294,7 +304,8 @@ ARY = {
 
     # --- Accueil ---
     "home.title": "لقي دارك للسكن الجامعي، بلا وكالة وبلا فلوس زايدة.",
-    "home.sub": "إيدو-دار كيربط الطلبة المغاربة نيشان بيناتهم: إعلانات موثوقين، كولوكيط ساهل، وتواصل مباشر بين الطالب وصاحب الدار. صفر عمولة، صفر وسيط.",
+    "home.sub": "إيدو-دار كيربط الطلبة المغاربة مع الملاك والوكلاء الموثوقين: إعلانات موثوقين، كولوكيط ساهل، وتواصل مباشر. صفر عمولة مخفية، صفر وسيط زايد.",
+    "home.step1.d": "سجل بالإيميل ديال الجامعة (@ac.ma) باش تاخد البادج ديال التوثيق. الملاك والوكلاء يقدرو يسجلو بأي إيميل.",
     "home.tag1": "0 درهم عمولة",
     "home.tag2": "تأكيد الإيميل @ac.ma",
     "home.tag3": "الإبلاغ على النصبات",
@@ -312,7 +323,7 @@ ARY = {
 
     # --- Annonces ---
     "l.title": "إعلانات السكن",
-    "l.sub": "فلتر، قارن، وتواصل مباشرة مع الطالب صاحب الدار.",
+    "l.sub": "فلتر، قارن، وتواصل مباشرة مع المالك ولا الوسيط — طالب ولا ماشي طالب.",
     "l.search": "قلّب (كلمة، حومة، جامعة…)",
     "l.city": "المدينة",
     "l.type": "نوع السكن",
@@ -363,6 +374,7 @@ ARY = {
     "l.about_owner": "صاحب الإعلان",
     "l.verified_badge": "طالب موثوق",
     "l.unverified_badge": "حساب غير موثوق",
+    "l.owner_badge": "مالك / وسيط",
     "l.owner_listings": "{n} إعلان(ات)",
     "l.status_loue": "تكراءات",
     "l.status_retire": "تحيدات",
@@ -414,7 +426,10 @@ ARY = {
     "a.name": "الاسم الكامل",
     "a.email": "الإيميل",
     "a.email_ph": "prenom.nom@um5.ac.ma",
-    "a.email_help": "استعمل الإيميل ديال الجامعة لي كيتسالا بـ .ac.ma باش تاخد البادج ديال التوثيق.",
+    "a.email_help": "بادج «الطالب الموثوق» كيطلب إيميل جامعي (.ac.ma). الملاك والوكلاء يقدرو يسجلو بأي إيميل.",
+    "a.account_type": "كنسجل بصفتي",
+    "a.type_etudiant": "طالب(ة)",
+    "a.type_proprietaire": "مالك ولا وسيط عقاري",
     "a.password": "كلمة السر",
     "a.password2": "أكّد كلمة السر",
     "a.phone": "الهاتف",
@@ -424,7 +439,7 @@ ARY = {
     "a.do_reg": "دير الحساب",
     "a.err_credentials": "الإيميل ولا كلمة السر ماشي صحيحين.",
     "a.err_exists": "كاين حساب من قبل بهاد الإيميل.",
-    "a.err_domain": "هاد الإيميل ماشي إيميل جامعي مغربي (.ac.ma).",
+    "a.err_domain": "بطاقة الطالب، خاصك استعمل الإيميل ديال الجامعة (.ac.ma). إلا ماشي هكذا، سجل بحال مالك ولا وسيط.",
     "a.err_match": "جوج كلمات السر ماشي متطابقين.",
     "a.err_short": "كلمة السر خاصها تكون 6 حروف على الأقل.",
     "a.welcome": "مرحبا {name}!",
@@ -446,10 +461,11 @@ ARY = {
     "v.resend": "عاود طلب كود",
     "v.demo": "وضعية تجريبية: الكود كيبان هنا حيت ماكاين حتى سيرفر ديال الإيميل.",
     "v.not_eligible": "هاد الإيميل ماشي مؤهل للتوثيق التلقائي (.ac.ma).",
+    "v.owner_info": "الملاك والوكلاء كيتعرفو عليهم بالهاتف والوثائق (العقد، الوصل ديال الكراء). بادج «الطالب الموصّق» خاص بالأعضاء الطلبة غير.",
 
     # --- Messagerie ---
     "m.title": "الرسائل",
-    "m.sub": "هضر مباشرة مع الطالب صاحب الدار — بلا وكالة وبلا عمولة.",
+    "m.sub": "هضر مباشرة مع المالك ولا الوسيط — بلا وسيط، بلا عمولة مخفية.",
     "m.need_login": "دخل للحساب باش توصل لرسائلك.",
     "m.conversations": "المحادثات",
     "m.empty": "ماكاين حتى محادثة دابا.",

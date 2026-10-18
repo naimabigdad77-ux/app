@@ -92,6 +92,16 @@ def trust_bar(score: int, label: str = "") -> str:
     )
 
 
+def owner_badge(is_verified: bool, account_type: str | None) -> str:
+    """Badge d'un propriétaire d'annonce : étudiant vérifié, propriétaire/agent, ou non vérifié."""
+    if account_type == "proprietaire":
+        return (f'<span class="k-pill" style="background:#e0e7ff;color:#3730a3">'
+                f'🏠 {t("l.owner_badge")}</span>')
+    if is_verified:
+        return f'<span class="k-pill ok">✅ {t("l.verified_badge")}</span>'
+    return f'<span class="k-pill warn">⚠️ {t("l.unverified_badge")}</span>'
+
+
 def alert(message: str, kind: str = "") -> None:
     st.markdown(
         f'<div class="k-alert {kind}">{message}</div>',

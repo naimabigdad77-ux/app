@@ -28,7 +28,7 @@ st.markdown(
         <div class="k-top">
             <div><b style="font-size:1.15rem">👤 {html.escape(user['full_name'])}</b><br>
                  <span class="k-mini">✉️ {html.escape(user['email'])}</span></div>
-            <div>{'<span class="k-pill ok">✅ ' + t('l.verified_badge') + '</span>' if user['is_verified'] else '<span class="k-pill warn">⚠️ ' + t('l.unverified_badge') + '</span>'}</div>
+            <div>{ui.owner_badge(user['is_verified'], user.get('account_type'))}</div>
         </div>
     </div>
     """,
@@ -43,6 +43,8 @@ ui.section(t("v.title"), hint=t("v.sub"))
 
 if user["is_verified"]:
     ui.alert(t("v.ok"), kind="ok")
+elif user.get("account_type") == "proprietaire":
+    ui.alert(t("v.owner_info"), kind="info")
 elif not auth.is_academic_email(user["email"]):
     ui.alert(t("v.not_eligible"))
 else:

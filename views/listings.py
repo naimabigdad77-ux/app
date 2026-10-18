@@ -74,11 +74,7 @@ def open_listing(listing_id: int) -> None:
 
     st.divider()
     score_html = ui.trust_bar(score)
-    verified = (
-        f'<span class="k-pill ok">✅ {t("l.verified_badge")}</span>'
-        if l["owner_verified"]
-        else f'<span class="k-pill warn">⚠️ {t("l.unverified_badge")}</span>'
-    )
+    verified = ui.owner_badge(l["owner_verified"], l.get("owner_type"))
     n_owner = len(L.my_listings(l["owner_id"]))
     st.markdown(
         f"""

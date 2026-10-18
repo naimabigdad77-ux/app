@@ -29,6 +29,11 @@ with login_tab:
 with reg_tab:
     with st.form("register_form"):
         st.info(t("a.email_help"))
+        account_type = st.radio(
+            t("a.account_type"), ["etudiant", "proprietaire"], key="rg_type", horizontal=True,
+            format_func=lambda v: t("a.type_etudiant") if v == "etudiant"
+            else t("a.type_proprietaire"),
+        )
         c1, c2 = st.columns(2)
         with c1:
             name = st.text_input(t("a.name"), key="rg_name")
@@ -41,7 +46,8 @@ with reg_tab:
             pwd2 = st.text_input(t("a.password2"), type="password", key="rg_pwd2")
         ok = st.form_submit_button(t("a.do_reg"), type="primary", use_container_width=True)
     if ok:
-        success, msg = auth.register(name, email, pwd, pwd2, phone, university, city)
+        success, msg = auth.register(name, email, pwd, pwd2, phone, university, city,
+                                     account_type)
         if success:
             ui.flash(msg)
             ui.goto("views/profile.py")

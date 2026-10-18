@@ -62,7 +62,7 @@ with right:
             <div class="k-card" style="box-shadow:none;background:#fdfaf4;padding:.8rem 1rem">
                 <div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap">
                     <div><b>👤 {html.escape(conv['other_name'])}</b>
-                        {'<span class="k-pill ok">✅ ' + t('l.verified_badge') + '</span>' if conv['other_verified'] else '<span class="k-pill warn">⚠️ ' + t('l.unverified_badge') + '</span>'}
+                        {ui.owner_badge(conv['other_verified'], conv.get('other_type'))}
                     </div>
                     <div class="k-mini">🏠 {html.escape(conv['listing_title'])}</div>
                 </div>

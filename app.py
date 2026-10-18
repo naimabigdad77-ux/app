@@ -45,11 +45,7 @@ with st.sidebar:
 
     user = auth.current_user()
     if user:
-        badge = (
-            '<span class="k-pill ok">✅ ' + t("l.verified_badge") + "</span>"
-            if user["is_verified"]
-            else '<span class="k-pill warn">⚠️ ' + t("l.unverified_badge") + "</span>"
-        )
+        badge = ui.owner_badge(user["is_verified"], user.get("account_type"))
         st.markdown(
             f"""
             <div class="k-card" style="box-shadow:none;padding:.85rem">

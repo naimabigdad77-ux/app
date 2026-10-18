@@ -57,9 +57,11 @@ def register(
     phone: str,
     university: str,
     city: str,
+    account_type: str = "etudiant",
 ) -> tuple[bool, str]:
     email = (email or "").strip().lower()
     full_name = (full_name or "").strip()
+    account_type = account_type if account_type in ("etudiant", "proprietaire") else "etudiant"
 
     if len(full_name) < 3:
         return False, t("a.err_credentials")
@@ -69,7 +71,9 @@ def register(
         return False, t("a.err_short")
     if password != password2:
         return False, t("a.err_match")
-    if not is_academic_email(email):
+    # Seuls les comptes « étudiant » doivent prouver leur statut via un e-mail @ac.ma.
+    # Les propriétaires et agents s'inscrivent avec n'importe quelle adresse valide.
+    if account_type == "etudiant" and not is_academic_email(email):
         return False, t("a.err_domain")
 
     conn = db.get_conn()
@@ -78,10 +82,10 @@ def register(
 
     cur = conn.execute(
         """INSERT INTO users (full_name, email, password_hash, phone, university, city,
-                              is_verified, created_at)
-           VALUES (?,?,?,?,?,?,0,?)""",
+                              account_type, is_verified, created_at)
+           VALUES (?,?,?,?,?,?,?,0,?)""",
         (full_name, email, db.hash_password(password), (phone or "").strip(),
-         university, city, db.now()),
+         university if account_type == "etudiant" else None, city, account_type, db.now()),
     )
     conn.commit()
     st.session_state["user_id"] = cur.lastrowid

@@ -1,7 +1,16 @@
 # 🏠 Edu-Dar — إيدو-دار
 
 Prototype d'application de logement étudiant au Maroc : les étudiants trouvent un logement
-ou une colocation **directement entre eux**, sans agence et sans frais abusifs.
+ou une colocation **directement auprès des propriétaires et des agents**, sans intermédiaire
+ni frais abusifs.
+
+Deux types de comptes cohabitent :
+
+- **Étudiant(e)** — inscription avec un e-mail universitaire (`@ac.ma`) ouvrant droit au badge
+  « étudiant vérifié » après validation d'un code à 6 chiffres ;
+- **Propriétaire ou agent immobilier** — inscription libre avec n'importe quel e-mail valide
+  (ils ne sont **pas** forcément des étudiants), identifiés par un badge dédié et par leur
+  téléphone / documents.
 
 Interface bilingue **Français / الدارجة**, construite avec **Streamlit** et stockée dans un
 fichier **SQLite** local (`data/edudar.db`).
@@ -24,7 +33,9 @@ démonstration sont créées automatiquement au premier lancement.
 |---|---|---|
 | `salma.benali@um5.ac.ma` | `etudiant2026` | étudiante vérifiée, 1 annonce |
 | `youssef.amrani@ufc.ac.ma` | `etudiant2026` | propriétaire vérifié, annonces |
-| `khadija.mernissi@gmail.com` | `etudiant2026` | compte **non vérifié** (exemple) |
+| `khadija.mernissi@gmail.com` | `etudiant2026` | étudiante **non vérifiée** (exemple) |
+| `fatimazahra.elidrissi@gmail.com` | `etudiant2026` | **propriétaire** (pas étudiante) |
+| `contact@nour-immobilier.ma` | `etudiant2026` | **agent immobilier** (pas étudiant) |
 
 Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
 
@@ -39,11 +50,13 @@ Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
 - Tri par date, prix ou popularité
 - Score de **fiabilité** (0-100) calculé pour chaque annonce
 
-### 2. Vérification du statut étudiant
-- L'inscription exige une adresse universitaire marocaine (`@ac.ma`, `@ensias.ac.ma`…)
-- Un **code à 6 chiffres** est généré et validé (mode démonstration : le code s'affiche
-  dans l'app, faute de serveur de messagerie connecté)
-- Les comptes vérifiants obtiennent un badge qui augmente leur score de fiabilité
+### 2. Deux types de comptes : étudiants, propriétaires et agents
+- **Étudiant(e)** : l'inscription exige une adresse universitaire marocaine (`@ac.ma`,
+  `@ensias.ac.ma`…), puis un **code à 6 chiffres** est validé (mode démonstration : le code
+  s'affiche dans l'app, faute de serveur de messagerie connecté) → badge « étudiant vérifié ».
+- **Propriétaire ou agent** : inscription avec n'importe quel e-mail valide — ils ne sont pas
+  forcément des étudiants. Badge « Propriétaire / Agent » et score de fiabilité distinct.
+- Les deux peuvent publier, contacter et signaler.
 
 ### 3. Messagerie étudiant ↔ étudiant
 - Conversation créée automatiquement autour d'une annonce
