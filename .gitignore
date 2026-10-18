@@ -1,0 +1,21 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# --- Base de données locale (recréée au 1er lancement) ---
+data/
+*.db
+*.sqlite3
+
+# --- Streamlit : ne jamais versionner les secrets ---
+.streamlit/secrets.toml
+
+# --- OS / éditeurs ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
