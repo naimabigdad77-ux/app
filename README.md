@@ -24,10 +24,18 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-L'application s'ouvre sur `http://localhost:8501`. La base de données et les données de
-démonstration sont créées automatiquement au premier lancement.
+L'application s'ouvre sur `http://localhost:8501`. La base de données est créée
+automatiquement au premier lancement : **l'application démarre vide**, sans aucune donnée
+de test.
 
 ## 👤 Comptes de démonstration
+
+Aucune donnée fictive n'est créée par défaut. Pour obtenir un jeu complet de démo
+(annonces, conversations, signalements) :
+
+```bash
+EDUDAR_DEMO=1 streamlit run app.py      # Windows : $env:EDUDAR_DEMO="1"
+```
 
 | E-mail | Mot de passe | Rôle |
 |---|---|---|
@@ -37,7 +45,7 @@ démonstration sont créées automatiquement au premier lancement.
 | `fatimazahra.elidrissi@gmail.com` | `etudiant2026` | **propriétaire** (pas étudiante) |
 | `contact@nour-immobilier.ma` | `etudiant2026` | **agent immobilier** (pas étudiant) |
 
-Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
+Pour repartir de zéro : supprimez le dossier `data/` puis relancez l'application.
 
 ---
 
@@ -48,6 +56,8 @@ Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
 - Filtres : ville, type (studio, chambre, appartement, colocation…), budget max,
   préférence filles/garçons, meublé, charges comprises, mots-clés
 - Tri par date, prix ou popularité
+- **Photos** : jusqu'à 4 photos par annonce (JPG, PNG, WebP), miniature automatique,
+  galerie dans la fiche détail
 - Score de **fiabilité** (0-100) calculé pour chaque annonce
 
 ### 2. Deux types de comptes : étudiants, propriétaires et agents
@@ -80,6 +90,12 @@ Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
 - Le thème sombre est un simple fichier (`assets/dark.css`) ajouté au CSS de base, sans
   changer le thème natif de Streamlit
 
+### 7. Photos des annonces
+- Jusqu'à **4 photos** par annonce (JPG, PNG, WebP, 5 Mo max chacune)
+- Type et taille vérifiés à l'envoi, miniature générée côté serveur (Pillow)
+- Affichées en vignette sur les cartes et en galerie dans la fiche détail
+- Stockées dans `data/images/` (hors version controlée) et supprimées avec l'annonce
+
 ---
 
 ## 🗂 Structure du projet
@@ -91,10 +107,11 @@ app/
 ├── assets/style.css       # Habillage (couleurs, cartes, hero)
 ├── assets/dark.css        # Surcharge du thème sombre
 ├── core/
-│   ├── db.py              # Schéma SQLite + données de démonstration
+│   ├── db.py              # Schéma SQLite + seed démo (EDUDAR_DEMO=1)
 │   ├── i18n.py            # Traductions FR / الدارجة
 │   ├── auth.py            # Inscription, connexion, vérification @ac.ma
 │   ├── listings.py        # Recherche, publication, favoris, score de fiabilité
+│   ├── images.py          # Téléversement, miniatures et suppression des photos
 │   ├── messaging.py       # Conversations et messages
 │   ├── reports.py         # Signalements et modération automatique
 │   ├── budget.py          # Logique du calculateur de budget
@@ -119,7 +136,7 @@ app/
 ## 🧭 Pistes pour la suite
 
 - Envoi réel des codes de vérification (SMTP / Resend)
-- Photos uploadées (Stockage S3 / Supabase Storage)
+- Stockage des photos sur un cloud (S3 / Supabase Storage)
 - Carte des logements (folium / pydeck) et calcul de distance fac ↔ logement
 - Avis et notation entre étudiants
 - Contrat de colocation générable en PDF

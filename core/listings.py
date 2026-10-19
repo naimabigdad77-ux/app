@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 
 import streamlit as st
 
-from . import db
+from . import db, images
 from .i18n import t
 
 TYPE_ICONS = {
@@ -72,6 +73,15 @@ def _base_query() -> str:
     """
 
 
+def _decode(row) -> dict:
+    d = dict(row)
+    try:
+        d["images"] = list(json.loads(d.get("images") or "[]"))
+    except (TypeError, ValueError):
+        d["images"] = []
+    return d
+
+
 def list_listings(
     city: str | None = None,
     listing_type: str | None = None,
@@ -121,7 +131,7 @@ def list_listings(
     }.get(sort, "l.created_at DESC")
 
     rows = db.get_conn().execute(" ".join(sql) + f" ORDER BY {order}", params).fetchall()
-    return [dict(r) for r in rows]
+    return [_decode(r) for r in rows]
 
 
 def get_listing(listing_id: int, include_inactive: bool = False) -> dict | None:
@@ -129,7 +139,7 @@ def get_listing(listing_id: int, include_inactive: bool = False) -> dict | None:
     if not include_inactive:
         sql += " AND l.status = 'active'"
     row = db.get_conn().execute(sql, (listing_id,)).fetchone()
-    return dict(row) if row else None
+    return _decode(row) if row else None
 
 
 def count_stats() -> dict:
@@ -145,19 +155,24 @@ def count_stats() -> dict:
 # --------------------------------------------------------------------------- #
 # Écriture
 # --------------------------------------------------------------------------- #
-def add_listing(owner_id: int, data: dict) -> int:
+def add_listing(owner_id: int, data: dict, image_files=None) -> int:
+    """Publie une annonce. `image_files` = fichiers téléversés (st.file_uploader)."""
+    photo_names, _bad = images.save(image_files)
+    # L'URL externe reste acceptée : si aucune photo n'est téléversée on l'utilise.
+    stored = json.dumps(photo_names) if photo_names else "[]"
+
     conn = db.get_conn()
     cur = conn.execute(
         """INSERT INTO listings (owner_id, title, listing_type, offer, city, quartier, university,
                                  price_mad, charges_incl, surface, rooms, furnished, gender_pref,
-                                 available_from, description, contact_phone, image_url, created_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                 available_from, description, contact_phone, image_url, images, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (owner_id, data["title"], data["listing_type"], data["offer"], data["city"],
          data.get("quartier"), data.get("university"), data["price_mad"],
          int(data.get("charges_incl", True)), data.get("surface"), data.get("rooms"),
          int(data.get("furnished", True)), data.get("gender_pref", "Tous"),
          data.get("available_from"), data["description"], data.get("contact_phone"),
-         data.get("image_url"), db.now()),
+         data.get("image_url"), stored, db.now()),
     )
     conn.commit()
     return cur.lastrowid
@@ -172,15 +187,22 @@ def update_status(listing_id: int, owner_id: int, status: str) -> None:
 
 def delete_listing(listing_id: int, owner_id: int) -> None:
     conn = db.get_conn()
-    conn.execute("DELETE FROM listings WHERE id = ? AND owner_id = ?", (listing_id, owner_id))
-    conn.commit()
+    row = conn.execute(
+        "SELECT l.*, u.id AS uid FROM listings l JOIN users u ON u.id = l.owner_id "
+        "WHERE l.id = ? AND l.owner_id = ?", (listing_id, owner_id)
+    ).fetchone()
+    if row:
+        images.delete(_decode(row)["images"])
+        conn.execute("DELETE FROM listings WHERE id = ? AND owner_id = ?",
+                     (listing_id, owner_id))
+        conn.commit()
 
 
 def my_listings(owner_id: int) -> list[dict]:
     rows = db.get_conn().execute(
         _base_query() + " WHERE l.owner_id = ? ORDER BY l.created_at DESC", (owner_id,)
     ).fetchall()
-    return [dict(r) for r in rows]
+    return [_decode(r) for r in rows]
 
 
 def increment_views(listing_id: int) -> None:

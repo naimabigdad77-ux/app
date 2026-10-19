@@ -3,6 +3,7 @@
 import streamlit as st
 
 from core import auth
+from core import images as IMG
 from core import listings as L
 from core import ui
 from core.db import CITIES, GENDER_PREFS, LISTING_TYPES, QUARTIERS, UNIVERSITIES
@@ -70,8 +71,21 @@ r4 = st.columns([1, 1.4])
 with r4[0]:
     phone = st.text_input(t("p.phone"), value=user.get("phone") or "", key="pub_phone")
 with r4[1]:
-    image = st.text_input(t("p.image"), key="pub_image",
-                          placeholder="https://…")
+    st.caption(t("p.image_help"))
+
+uploads = st.file_uploader(
+    f"📷 {t('p.photos')}",
+    type=["jpg", "jpeg", "png", "webp"],
+    accept_multiple_files=True,
+    key="pub_photos",
+    help=t("p.image_help"),
+)
+if uploads:
+    previews = [f for f in uploads if f.type in IMG.ALLOWED][:IMG.MAX_IMAGES]
+    if previews:
+        st.image(previews, width=150)
+    if len(uploads) > IMG.MAX_IMAGES:
+        st.warning(t("p.image_max", n=IMG.MAX_IMAGES))
 
 st.write("")
 if st.button(t("p.submit"), type="primary", use_container_width=True):
@@ -103,8 +117,8 @@ if st.button(t("p.submit"), type="primary", use_container_width=True):
             "available_from": str(dispo),
             "description": description.strip(),
             "contact_phone": phone.strip() or None,
-            "image_url": image.strip() or None,
-        })
+            "image_url": None,
+        }, image_files=uploads)
         for k in list(st.session_state.keys()):
             if k.startswith("pub_"):
                 del st.session_state[k]

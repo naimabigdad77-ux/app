@@ -177,6 +177,7 @@ CREATE TABLE IF NOT EXISTS listings (
     available_from TEXT,
     description    TEXT,
     image_url      TEXT,
+    images         TEXT    NOT NULL DEFAULT '[]',          -- JSON : noms de fichiers photo
     contact_phone  TEXT,
     status         TEXT    NOT NULL DEFAULT 'active',    -- 'active' | 'loue' | 'retire'
     views          INTEGER NOT NULL DEFAULT 0,
@@ -362,10 +363,20 @@ SEED_CONVERSATIONS = [
 # --------------------------------------------------------------------------- #
 # Initialisation
 # --------------------------------------------------------------------------- #
+def demo_mode() -> bool:
+    """Données de démonstration activées ? (EDUDAR_DEMO=1, hors production)."""
+    return os.environ.get("EDUDAR_DEMO", "").strip().lower() in ("1", "true", "yes", "on")
+
+
 def init_db(force_reseed: bool = False) -> None:
     conn = get_conn()
     conn.executescript(SCHEMA)
     _migrate(conn)
+
+    # L'application démarre vide : les données de démonstration ne sont créées
+    # que sur demande (EDUDAR_DEMO=1), jamais dans une vraie utilisation.
+    if not (demo_mode() or force_reseed):
+        return
 
     has_users = conn.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
     if has_users and not force_reseed:
@@ -382,6 +393,11 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute(
             "ALTER TABLE users ADD COLUMN account_type TEXT NOT NULL DEFAULT 'etudiant'"
         )
+        conn.commit()
+
+    listings_cols = {row["name"] for row in conn.execute("PRAGMA table_info(listings)")}
+    if "images" not in listings_cols:
+        conn.execute("ALTER TABLE listings ADD COLUMN images TEXT NOT NULL DEFAULT '[]'")
         conn.commit()
 
 

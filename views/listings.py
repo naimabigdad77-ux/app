@@ -7,6 +7,7 @@ import html
 import streamlit as st
 
 from core import auth
+from core import images as IMG
 from core import listings as L
 from core import messaging as M
 from core import reports as R
@@ -52,6 +53,14 @@ def open_listing(listing_id: int) -> None:
     st.markdown(f"{loc} · {t('l.posted', d=L.rel_time(l['created_at']))}")
     if l.get("available_from"):
         st.markdown(f"📅 {t('l.dispo', d=l['available_from'])}")
+
+    if l.get("images"):
+        paths = [p for p in (IMG.path_of(n) for n in l["images"]) if p]
+        if paths:
+            st.write("")
+            cells = st.columns(len(paths))
+            for cell, p in zip(cells, paths):
+                cell.image(str(p), width="stretch")
 
     if open_rep:
         ui.alert(t("l.open_report", n=open_rep))

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from . import images
 from . import listings as L
 from .i18n import brand, t
 
@@ -164,8 +165,16 @@ def listing_card(l: dict) -> str:
     if l.get("status") == "loue":
         status_badge = f'<span class="k-pill warn">{t("l.status_loue")}</span>'
 
+    photo = ""
+    thumb = images.data_uri(l["images"][0]) if l.get("images") else None
+    if not thumb and l.get("image_url"):
+        thumb = l["image_url"]
+    if thumb:
+        photo = f'<div class="k-photo"><img src="{html.escape(thumb, quote=True)}" alt=""></div>'
+
     return _flatten(f"""
     <div class="k-card">
+        {photo}
         <div class="k-top">
             <div>
                 <span class="k-pill type">{icon} {html.escape(l['listing_type'])}</span>
