@@ -59,6 +59,9 @@ Pour repartir de zéro : supprimez le dossier `data/` puis relancez l'applicatio
 - **Photos** : jusqu'à 4 photos par annonce (JPG, PNG, WebP), miniature automatique,
   galerie dans la fiche détail
 - Score de **fiabilité** (0-100) calculé pour chaque annonce
+- **15 villes** et **50 universités / écoles** marocaines dans les menus : universités
+  publiques (UM5, UFC, UCA, UIZ Agadir, UM6P…) et grandes écoles (ENCG Agadir, ENCG
+  Casablanca, ENSIAS, EMI, ENSA, EST, FST, INPT, INSEA…)
 
 ### 2. Deux types de comptes : étudiants, propriétaires et agents
 - **Étudiant(e)** : l'inscription exige une adresse universitaire marocaine (`@ac.ma`,

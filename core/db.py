@@ -41,6 +41,7 @@ ACADEMIC_DOMAINS = (
 )
 
 UNIVERSITIES = [
+    # Universités publiques
     "Université Mohammed V - Rabat (UM5)",
     "Université Hassan II - Casablanca (UFC)",
     "Université Cadi Ayyad - Marrakech (UCA)",
@@ -48,13 +49,65 @@ UNIVERSITIES = [
     "Université Mohammed I - Oujda (UMI)",
     "Université Ibn Tofail - Kénitra (UIT)",
     "Université Chouaib Doukkali - El Jadida (UCD)",
+    "Université Ibn Zohr - Agadir (UIZ)",
+    "Université Moulay Ismaïl - Meknès",
+    "Université Abdelmalek Essaâdi - Tanger (UAE)",
+    "Université Mohammed VI Polytechnique - Benguerir (UM6P)",
+    # Grandes écoles publiques
     "ENSIAS - Rabat",
     "EMI - Casablanca",
     "ENCG - Kénitra",
+    "ENCG Agadir",
+    "ENCG Casablanca",
+    "ENCG Fès",
+    "ENCG Tanger",
+    "ENCG Marrakech",
+    "ENCG Oujda",
+    "ENCG Mohammedia",
+    "ENSA Casablanca",
+    "ENSA Mohammedia",
+    "ENSA Agadir",
+    "ENSA Tanger",
+    "ENSA Oujda",
+    "ENSA Marrakech",
+    "ENSA Béni Mellal",
+    "ENIM - Rabat (Mines et Métallurgie)",
+    "INPT - Rabat",
+    "INSEA - Casablanca",
+    "ENSAM - Rabat (Arts et Métiers)",
+    "EST Casablanca",
+    "EST Rabat",
+    "EST Agadir",
+    "EST Tanger",
+    "EST Fès",
+    "EST Kénitra",
+    "EST Marrakech",
+    "FST Settat",
+    "FST Mohammedia",
+    "FST Kénitra",
+    "FST Oujda",
+    "ENI - Marrakech (Informatique)",
+    "ISTA - Technologie appliquée",
     "UIR - Casablanca",
     "Al Akhawayn - Ifrane (AUI)",
+    "UIP - Université Polytechnique internationale",
+    "EAC - École d'Architecture Casablanca",
     "Autre école / université",
 ]
+
+# Références nommées, utilisées par les données de démo et lisibles ailleurs
+U_UM5 = UNIVERSITIES[0]
+U_UFC = UNIVERSITIES[1]
+U_UCA = UNIVERSITIES[2]
+U_USMBA = UNIVERSITIES[3]
+U_UMI = UNIVERSITIES[4]
+U_UIT = UNIVERSITIES[5]
+U_UIZ = UNIVERSITIES[7]
+U_UMI_M = UNIVERSITIES[8]
+U_ENSIAS = UNIVERSITIES[11]
+U_EMI = UNIVERSITIES[12]
+U_ENCG_K = UNIVERSITIES[13]
+U_ENCG_AG = UNIVERSITIES[14]
 
 CITIES = [
     "Casablanca",
@@ -67,6 +120,11 @@ CITIES = [
     "Oujda",
     "Kénitra",
     "El Jadida",
+    "Mohammedia",
+    "Settat",
+    "Béni Mellal",
+    "Ifrane",
+    "Benguerir",
 ]
 
 QUARTIERS = {
@@ -80,6 +138,11 @@ QUARTIERS = {
     "Oujda": ["Ninghir", "Sidi Yahia", "Annakhil", "Andalous"],
     "Kénitra": ["Hay Essalam", "Maâmora", "Sidi Boulahia", "Centre"],
     "El Jadida": ["Centre", "Sidi Bouzid", "Quartier Er-Rahma", "Littoral"],
+    "Mohammedia": ["Centre", "Al Alia", "Kasbah", "Parc"],
+    "Settat": ["Centre", "Al Massira", "Sidi El Aidi", "Boulevard Mohammed V"],
+    "Béni Mellal": ["Centre", "Al Massira", "Hay Hassani", "Aïn Asserdoun"],
+    "Ifrane": ["Centre", "Michlifen", "Route d'Azrou"],
+    "Benguerir": ["Centre", "Zone universitaire", "Al Massira"],
 }
 
 LISTING_TYPES = ["Studio", "Chambre", "Appartement", "Colocation", "Dortoir", "Riad / Villa partagée"]
@@ -226,21 +289,21 @@ CREATE TABLE IF NOT EXISTS favorites (
 # --------------------------------------------------------------------------- #
 SEED_USERS = [
     # (nom, email, ville, université, tél, bio, vérifié, type de compte)
-    ("Salma Benali", "salma.benali@um5.ac.ma", "Rabat", UNIVERSITIES[0],
+    ("Salma Benali", "salma.benali@um5.ac.ma", "Rabat", U_UM5,
      "0661-245187", "Étudiante en 2e année droit, je cherche une coloc calme et studieuse.", 1, "etudiant"),
-    ("Youssef El Amrani", "youssef.amrani@ufc.ac.ma", "Casablanca", UNIVERSITIES[1],
+    ("Youssef El Amrani", "youssef.amrani@ufc.ac.ma", "Casablanca", U_UFC,
      "0662-883410", "Étudiant en gestion, je loue moi-même mon studio sans agence.", 1, "etudiant"),
-    ("Imane Chraibi", "imane.chraibi@ensias.ac.ma", "Rabat", UNIVERSITIES[6],
+    ("Imane Chraibi", "imane.chraibi@ensias.ac.ma", "Rabat", U_ENSIAS,
      "0670-112233", "Élève ingénieure ENSIAS, je libère ma chambre en colocation.", 1, "etudiant"),
-    ("Mehdi Ouazzani", "mehdi.ouazzani@uca.ac.ma", "Marrakech", UNIVERSITIES[2],
+    ("Mehdi Ouazzani", "mehdi.ouazzani@uca.ac.ma", "Marrakech", U_UCA,
      "0655-778899", "Cherche une chambre proche de la fac, budget serré mais sérieux.", 1, "etudiant"),
-    ("Nour Ait Baha", "nour.aitbaha@usmba.ac.ma", "Fès", UNIVERSITIES[3],
+    ("Nour Ait Baha", "nour.aitbaha@usmba.ac.ma", "Fès", U_USMBA,
      "0677-456123", "En médecine, je cherche colocataire fille pour appartement partagé.", 1, "etudiant"),
-    ("Anas Berrada", "anas.berrada@emi.ac.ma", "Casablanca", "EMI - Casablanca",
+    ("Anas Berrada", "anas.berrada@emi.ac.ma", "Casablanca", U_EMI,
      "0663-990011", "Élève ingénieur EMI, je propose une chambre dans mon appart.", 1, "etudiant"),
-    ("Khadija Mernissi", "khadija.mernissi@gmail.com", "Agadir", None,
+    ("Khadija Mernissi", "khadija.mernissi@gmail.com", "Agadir", U_UIZ,
      "0658-221100", "Étudiante indépendante — profil de démonstration non vérifié.", 0, "etudiant"),
-    ("Hamza Tazi", "hamza.tazi@ump.ac.ma", "Oujda", UNIVERSITIES[4],
+    ("Hamza Tazi", "hamza.tazi@ump.ac.ma", "Oujda", U_UMI,
      "0669-341278", "Recherche studio pas cher à Oujda pour la rentrée.", 1, "etudiant"),
     # --- Propriétaires et agents : pas nécessairement des étudiants ---
     ("Fatima Zahra El Idrissi", "fatimazahra.elidrissi@gmail.com", "Casablanca", None,
@@ -255,37 +318,37 @@ SEED_LISTINGS = [
     # (titre, type, offre, ville, quartier, université, prix, charges, surface,
     #  chambres, meublé, genre, dispo, description, téléphone, jours, vues, image)
     ("Studio meublé près de la fac, sans agence", "Studio", "propose", "Casablanca",
-     "Maârif", UNIVERSITIES[1], 3800, 1, 28, 1, 1, "Tous", "2026-09-01",
+     "Maârif", U_UFC, 3800, 1, 28, 1, 1, "Tous", "2026-09-01",
      "Studio entièrement meublé et lumineux, 5 min à pied de la faculté. Électricité et eau comprises, "
      "internet fibre disponible. Propriétaire direct, aucune commission d'agence.", "0662-883410", 12, 214,
      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"),
 
     ("Colocation fille, chambre calme et lumineuse", "Colocation", "propose", "Rabat",
-     "Agdal", UNIVERSITIES[6], 2100, 1, 16, 1, 1, "Filles", "2026-09-05",
+     "Agdal", U_ENSIAS, 2100, 1, 16, 1, 1, "Filles", "2026-09-05",
      "Chambre dans une colocation de 3 étudiantes ENSIAS. Cuisine équipée, salon, wifi, local sécurisé. "
      "Ambiance studieuse, on partage les courses.", "0670-112233", 8, 168,
      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800"),
 
     ("Chambre dans appartement partagé - Maârif", "Chambre", "propose", "Casablanca",
-     "Derb Ghallef", UNIVERSITIES[1], 1750, 0, 14, 1, 1, "Garçons", "2026-08-20",
+     "Derb Ghallef", U_UFC, 1750, 0, 14, 1, 1, "Garçons", "2026-08-20",
      "Chambre à louer dans un appartement de 2 colocataires (ENSA + EMI). Charges (eau, électricité, "
      "wifi) en sus selon consommation, environ 200 DH/mois. Quartier animé et bien desservi.", "0663-990011",
      20, 341, "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"),
 
     ("Appartement 2 chambres - je cherche un colocataire", "Appartement", "cherche", "Casablanca",
-     "Gauthier", UNIVERSITIES[1], 2600, 1, 62, 2, 1, "Garçons", "2026-09-01",
+     "Gauthier", U_UFC, 2600, 1, 62, 2, 1, "Garçons", "2026-09-01",
      "J'ai déjà l'appartement et je cherche un colocataire sérieux pour partager le loyer (1300 DH chacun). "
      "Meublé, climatisation, immeuble avec gardien, proche tramway.", "0662-441122", 5, 97,
      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800"),
 
     ("Studio proche Université Cadi Ayyad", "Studio", "propose", "Marrakech",
-     "Guéliz", UNIVERSITIES[2], 3200, 1, 30, 1, 1, "Tous", "2026-10-01",
+     "Guéliz", U_UCA, 3200, 1, 30, 1, 1, "Tous", "2026-10-01",
      "Studio rénové dans une résidence calme de Guéliz. Proche café, market et arrêt de bus pour la fac. "
      "Bail direct avec le propriétaire, pas de frais d'agence.", "0655-778899", 15, 122,
      "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800"),
 
     ("Colocation mixte près de la fac des sciences", "Colocation", "propose", "Fès",
-     "Ville Nouvelle", UNIVERSITIES[3], 1350, 1, 18, 1, 1, "Tous", "2026-09-15",
+     "Ville Nouvelle", U_USMBA, 1350, 1, 18, 1, 1, "Tous", "2026-09-15",
      "Chambre disponible dans une colocation de 4 étudiants. Loyer tout compris : eau, électricité, internet. "
      "Cuisine commune équipée, machine à laver.", "0677-456123", 3, 88,
      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800"),
@@ -297,19 +360,19 @@ SEED_LISTINGS = [
      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800"),
 
     ("Studio pas cher au centre de Oujda", "Studio", "propose", "Oujda",
-     "Ninghir", UNIVERSITIES[4], 1500, 0, 22, 1, 0, "Tous", "2026-09-10",
+     "Ninghir", U_UMI, 1500, 0, 22, 1, 0, "Tous", "2026-09-10",
      "Studio non meublé, idéal pour étudiant avec peu de budget. Charges (eau + électricité) en sus. "
      "Proche des cafés et du bus pour l'université Mohammed I.", "0669-341278", 6, 76,
      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800"),
 
     ("Cherche colocataire pour T2 - Hay Riad", "Appartement", "cherche", "Rabat",
-     "Hay Riad", UNIVERSITIES[0], 3000, 1, 74, 2, 1, "Filles", "2026-09-01",
+     "Hay Riad", U_UM5, 3000, 1, 74, 2, 1, "Filles", "2026-09-01",
      "Je loue un T2 et je cherche une colocataire pour la rentrée. Chambre 2 avec placard, salon spacieux, "
      "terrasse. Quartier calme et sécurisé, bus direct pour Agdal.", "0661-245187", 9, 133,
      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800"),
 
     ("Colocation garçons - proche ENCG Kénitra", "Colocation", "propose", "Kénitra",
-     "Maâmora", UNIVERSITIES[8], 1200, 1, 15, 1, 1, "Garçons", "2026-09-20",
+     "Maâmora", U_ENCG_K, 1200, 1, 15, 1, 1, "Garçons", "2026-09-20",
      "Chambre dans une grande maison avec jardin, 10 min à vélo de l'ENCG. Tout est compris, "
      "on partage les corvées. Ambiance sympa entre jeunes.", "0672-119988", 4, 61,
      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800"),
@@ -321,22 +384,28 @@ SEED_LISTINGS = [
      "https://images.unsplash.com/photo-1522771930-78848d9293e8?w=800"),
 
     ("Chambre libre dans T2 - Ville Nouvelle Fès", "Chambre", "propose", "Fès",
-     "Saïss", UNIVERSITIES[3], 1600, 0, 15, 1, 0, "Tous", "2026-09-05",
+     "Saïss", U_USMBA, 1600, 0, 15, 1, 0, "Tous", "2026-09-05",
      "Chambre libre dans un T2 partagé avec un étudiant en licence. Non meublée mais placard fourni. "
      "Charges à part (environ 250 DH/mois). Très proche des écoles de commerce.", "0677-998877", 11, 145,
      None),
 
     ("Appartement entier pas cher à Meknès", "Appartement", "propose", "Meknès",
-     "Hamria", UNIVERSITIES[3], 2200, 0, 55, 2, 0, "Tous", "2026-10-15",
+     "Hamria", U_UMI_M, 2200, 0, 55, 2, 0, "Tous", "2026-10-15",
      "Appartement 2 chambres à louer en direct. Idéal pour 2 étudiants qui veulent se partager. "
      "Non meublé, proprio disponible et flexible sur la caution.", "0667-223344", 24, 267,
      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800"),
 
     ("Colocation fille - Hivernage Marrakech", "Colocation", "propose", "Marrakech",
-     "Hivernage", UNIVERSITIES[2], 1900, 1, 20, 1, 1, "Filles", "2026-09-12",
+     "Hivernage", U_UCA, 1900, 1, 20, 1, 1, "Filles", "2026-09-12",
      "Chambre dans une villa partagée avec piscine et jardin. 3 colocataires étudiantes. "
      "Tout compris : ménage commun, wifi, électricité. Quartier Hivernage, bus pour la fac.", "0655-334455",
      7, 198, "https://images.unsplash.com/photo-1560448075-bb485b067938?w=800"),
+
+    ("Chambre à 10 min de l'ENCG Agadir", "Chambre", "propose", "Agadir",
+     "Dakhla", U_ENCG_AG, 1700, 1, 16, 1, 1, "Filles", "2026-09-15",
+     "Chambre meublée dans une colocation de 3 étudiantes de l'ENCG Agadir, à 10 minutes à pied. "
+     "Tout compris (eau, électricité, wifi), cuisine équipée. Bail direct, sans agence.", "0658-221100",
+     2, 57, "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800"),
 ]
 
 SEED_REPORTS = [
@@ -381,6 +450,20 @@ def init_db(force_reseed: bool = False) -> None:
     has_users = conn.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
     if has_users and not force_reseed:
         return
+
+    if has_users:
+        # force_reseed : on repart d'une base propre avant de réinsérer la démo
+        for table in ("messages", "conversations", "favorites", "reports", "listings"):
+            conn.execute(f"DELETE FROM {table}")
+        conn.execute("DELETE FROM users")
+        # Les ids doivent repartir de 1 : les données de démo s'y réfèrent
+        try:
+            conn.execute(
+                "DELETE FROM sqlite_sequence WHERE name IN "
+                "('users','listings','reports','conversations','messages','favorites')"
+            )
+        except sqlite3.Error:
+            pass
 
     _seed(conn)
     conn.commit()

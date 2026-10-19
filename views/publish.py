@@ -37,7 +37,7 @@ r1 = st.columns([1, 1, 1.6])
 with r1[0]:
     city = st.selectbox(t("l.city"), CITIES, key="pub_city")
 with r1[1]:
-    quartier = st.selectbox(t("p.quartier"), QUARTIERS[city], key="pub_quartier")
+    quartier = st.selectbox(t("p.quartier"), QUARTIERS.get(city, ["Centre"]), key="pub_quartier")
 with r1[2]:
     university = st.selectbox(t("p.university"), UNIVERSITIES, key="pub_uni")
 
