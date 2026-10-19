@@ -57,7 +57,7 @@ with right:
     if conv is None:
         st.info(t("m.pick"))
     else:
-        st.markdown(
+        ui.render(
             f"""
             <div class="k-card" style="box-shadow:none;background:#fdfaf4;padding:.8rem 1rem">
                 <div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap">
@@ -67,8 +67,7 @@ with right:
                     <div class="k-mini">🏠 {html.escape(conv['listing_title'])}</div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         if conv["listing_status"] != "active":

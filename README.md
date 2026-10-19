@@ -58,10 +58,10 @@ Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
   forcément des étudiants. Badge « Propriétaire / Agent » et score de fiabilité distinct.
 - Les deux peuvent publier, contacter et signaler.
 
-### 3. Messagerie étudiant ↔ étudiant
+### 3. Messagerie directe, sans intermédiaire
 - Conversation créée automatiquement autour d'une annonce
 - Compteur de messages non lus dans la barre latérale
-- Aucun intermédiaire, aucune commission
+- Aucune commission, aucun intermédiaire
 
 ### 4. Calculateur de budget
 - Revenus (bourse CNE/CNO, aide familiale, emploi) et dépenses (transport, nourriture…)
@@ -73,6 +73,13 @@ Pour repartir de zéro : supprimez `data/edudar.db` puis relancez l'application.
 - Le score de fiabilité chute automatiquement
 - **Modération automatique** : une annonce avec 3 signalements ouverts est retirée
 
+### 6. Interface bilingue et thème sombre
+- Interface en **français** et en **دارجة** (arabe), commutable à tout moment
+- Bouton **🌙 Mode sombre** dans la barre latérale ; au premier chargement, le thème suit
+  la préférence système du navigateur (`st.context.theme`)
+- Le thème sombre est un simple fichier (`assets/dark.css`) ajouté au CSS de base, sans
+  changer le thème natif de Streamlit
+
 ---
 
 ## 🗂 Structure du projet
@@ -82,6 +89,7 @@ app/
 ├── app.py                 # Point d'entrée : thème, langue, navigation
 ├── requirements.txt
 ├── assets/style.css       # Habillage (couleurs, cartes, hero)
+├── assets/dark.css        # Surcharge du thème sombre
 ├── core/
 │   ├── db.py              # Schéma SQLite + données de démonstration
 │   ├── i18n.py            # Traductions FR / الدارجة

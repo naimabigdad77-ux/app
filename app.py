@@ -18,6 +18,13 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Thème : première visite → on suit la préférence système du navigateur/OS.
+if "theme_dark" not in st.session_state:
+    try:
+        st.session_state["theme_dark"] = st.context.theme == "dark"
+    except Exception:          # contexte indisponible (tests, bare mode)
+        st.session_state["theme_dark"] = False
+
 ui.load_css()
 db.init_db()
 
@@ -40,21 +47,22 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
+    ui.toggle_dark()
+
     st.write("")
     st.markdown('<div class="k-sep"></div>', unsafe_allow_html=True)
 
     user = auth.current_user()
     if user:
         badge = ui.owner_badge(user["is_verified"], user.get("account_type"))
-        st.markdown(
+        ui.render(
             f"""
             <div class="k-card" style="box-shadow:none;padding:.85rem">
                 <b>{user['full_name']}</b><br>
                 <span class="k-mini">✉️ {user['email']}</span><br>
                 <div style="margin-top:.4rem">{badge}</div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         unread = M.unread_total(user["id"])
         if unread:

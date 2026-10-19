@@ -10,6 +10,9 @@ FR = {
     # --- Général ---
     "brand.sub": "Logement étudiant au Maroc",
     "lang.label": "Langue / اللغة",
+    "theme.dark": "Mode sombre",
+    "theme.light": "Mode clair",
+    "theme.help": "Le thème suit aussi la préférence de ton système au premier chargement.",
     "nav.home": "Accueil",
     "nav.listings": "Annonces",
     "nav.budget": "Calculateur de budget",
@@ -293,6 +296,9 @@ ARY = {
     # --- Général ---
     "brand.sub": "السكن ديال الطلبة فالمغرب",
     "lang.label": "Langue / اللغة",
+    "theme.dark": "الوضع الليلي",
+    "theme.light": "الوضع النهاري",
+    "theme.help": "الثيم كيتبع التفضيل ديال الجهاز ديالك أول مرة كيحل التطبيق.",
     "nav.home": "الصفحة الرئيسية",
     "nav.listings": "الإعلانات",
     "nav.budget": "حاسبة الميزانية",

@@ -22,7 +22,7 @@ if user is None:
         ui.goto("views/account.py")
     st.stop()
 
-st.markdown(
+ui.render(
     f"""
     <div class="k-card" style="box-shadow:none;background:#fdfaf4">
         <div class="k-top">
@@ -31,8 +31,7 @@ st.markdown(
             <div>{ui.owner_badge(user['is_verified'], user.get('account_type'))}</div>
         </div>
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 st.write("")
 
@@ -130,7 +129,7 @@ with tab1:
         if st.button(f"➕ {t('p.title')}"):
             ui.goto("views/publish.py")
     for l in my_listings:
-        st.markdown(ui.listing_card(l), unsafe_allow_html=True)
+        ui.render(ui.listing_card(l))
         bc1, bc2, bc3 = st.columns([1.3, 1.3, 1])
         with bc1:
             label = t("p.mark_active") if l["status"] != "active" else t("p.mark_loue")
@@ -156,7 +155,7 @@ with tab2:
         if st.button(f"🔍 {t('home.cta')}"):
             ui.goto("views/listings.py")
     for l in favorites:
-        st.markdown(ui.listing_card(l), unsafe_allow_html=True)
+        ui.render(ui.listing_card(l))
         bc1, bc2 = st.columns([1.4, 1])
         with bc1:
             if st.button(f"👁 {t('l.details')}", key=f"favd_{l['id']}", use_container_width=True):
@@ -174,7 +173,7 @@ with tab3:
     for r in my_reports:
         status = t("pr.report_done") if r["status"] != "ouvert" else t("pr.report_open")
         pill = '<span class="k-pill ok">' if r["status"] != "ouvert" else '<span class="k-pill warn">'
-        st.markdown(
+        ui.render(
             f"""
             <div class="k-card" style="box-shadow:none;padding:.8rem 1rem">
                 <div class="k-top">
@@ -185,8 +184,7 @@ with tab3:
                 </div>
                 {('<div class="k-mini" style="margin-top:.35rem">' + html.escape(r['details']) + '</div>') if r.get('details') else ''}
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         st.write("")
 

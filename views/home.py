@@ -56,7 +56,7 @@ else:
     cols = st.columns(len(latest))
     for col, l in zip(cols, latest):
         with col:
-            st.markdown(ui.listing_card(l), unsafe_allow_html=True)
+            ui.render(ui.listing_card(l))
             if st.button(f"👉 {t('l.details')}", key=f"home_d{l['id']}", use_container_width=True):
                 st.session_state["open_listing"] = l["id"]
                 ui.goto("views/listings.py")

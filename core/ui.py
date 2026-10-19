@@ -11,10 +11,45 @@ from . import listings as L
 from .i18n import brand, t
 
 CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "style.css"
+DARK_CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "dark.css"
+
+_THEME_KEY = "theme_dark"
+
+
+def is_dark() -> bool:
+    """Mode sombre actif ? (état de session, rempli par le toggle de la barre latérale)."""
+    return bool(st.session_state.get(_THEME_KEY, False))
+
+
+def toggle_dark() -> None:
+    """Pilote le mode sombre depuis la barre latérale."""
+    st.toggle(
+        f"🌙 {t('theme.dark')}" if not is_dark() else f"☀️ {t('theme.light')}",
+        key=_THEME_KEY,
+        help=t("theme.help"),
+    )
 
 
 def load_css() -> None:
-    st.markdown(f"<style>{CSS_PATH.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+    css = CSS_PATH.read_text(encoding="utf-8")
+    if is_dark() and DARK_CSS_PATH.exists():
+        css += "\n\n" + DARK_CSS_PATH.read_text(encoding="utf-8")
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+
+def _flatten(markup: str) -> str:
+    """Aplatit un bloc HTML en une seule ligne.
+
+    Markdown termine un bloc HTML à la première ligne vide : une ligne vide,
+    même remplie d'espaces, couperait la carte et ferait afficher la suite
+    comme du code. On supprime donc les lignes vides et l'indentation.
+    """
+    return " ".join(line.strip() for line in markup.strip().splitlines() if line.strip())
+
+
+def render(markup: str) -> None:
+    """st.markdown pour un bloc HTML multi-lignes, sans rupture de bloc."""
+    st.markdown(_flatten(markup), unsafe_allow_html=True)
 
 
 def goto(page_path: str) -> None:
@@ -33,7 +68,7 @@ def flash(message: str) -> None:
 # En-têtes
 # --------------------------------------------------------------------------- #
 def brand_block() -> None:
-    st.markdown(
+    render(
         f"""
         <div class="k-brand">
             <div class="logo">🏠</div>
@@ -42,13 +77,12 @@ def brand_block() -> None:
                 <div class="sub">{t('brand.sub')}</div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
 def hero() -> None:
-    st.markdown(
+    render(
         f"""
         <div class="k-hero">
             <h1>{t('home.title')}</h1>
@@ -60,16 +94,14 @@ def hero() -> None:
                 <span class="k-tag">💬 {t('home.tag4')}</span>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
 def section(title: str, hint: str = "") -> None:
     right = f'<span class="hint">{html.escape(hint)}</span>' if hint else ""
-    st.markdown(
-        f'<div class="k-section"><div class="bar"></div><h2>{html.escape(title)}</h2>{right}</div>',
-        unsafe_allow_html=True,
+    render(
+        f'<div class="k-section"><div class="bar"></div><h2>{html.escape(title)}</h2>{right}</div>'
     )
 
 
@@ -79,7 +111,7 @@ def stat_tiles(stats: dict[str, str]) -> None:
         f'<div class="l">{html.escape(str(k))}</div></div>'
         for k, v in stats.items()
     )
-    st.markdown(f'<div class="k-stats">{tiles}</div>', unsafe_allow_html=True)
+    render(f'<div class="k-stats">{tiles}</div>')
 
 
 def trust_bar(score: int, label: str = "") -> str:
@@ -95,22 +127,20 @@ def trust_bar(score: int, label: str = "") -> str:
 def owner_badge(is_verified: bool, account_type: str | None) -> str:
     """Badge d'un propriétaire d'annonce : étudiant vérifié, propriétaire/agent, ou non vérifié."""
     if account_type == "proprietaire":
-        return (f'<span class="k-pill" style="background:#e0e7ff;color:#3730a3">'
-                f'🏠 {t("l.owner_badge")}</span>')
+        return f'<span class="k-pill owner">🏠 {t("l.owner_badge")}</span>'
     if is_verified:
         return f'<span class="k-pill ok">✅ {t("l.verified_badge")}</span>'
     return f'<span class="k-pill warn">⚠️ {t("l.unverified_badge")}</span>'
 
 
 def alert(message: str, kind: str = "") -> None:
-    st.markdown(
+    render(
         f'<div class="k-alert {kind}">{message}</div>',
-        unsafe_allow_html=True,
     )
 
 
 def info_line(message: str, icon: str = "ℹ️") -> None:
-    st.markdown(f'<div class="k-mini">{icon} {message}</div>', unsafe_allow_html=True)
+    render(f'<div class="k-mini">{icon} {message}</div>')
 
 
 # --------------------------------------------------------------------------- #
@@ -134,7 +164,7 @@ def listing_card(l: dict) -> str:
     if l.get("status") == "loue":
         status_badge = f'<span class="k-pill warn">{t("l.status_loue")}</span>'
 
-    return f"""
+    return _flatten(f"""
     <div class="k-card">
         <div class="k-top">
             <div>
@@ -156,4 +186,4 @@ def listing_card(l: dict) -> str:
             <div class="k-mini">👁 {l['views']}</div>
         </div>
     </div>
-    """
+    """)

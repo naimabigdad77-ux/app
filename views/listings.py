@@ -35,18 +35,17 @@ def open_listing(listing_id: int) -> None:
     score = L.trust_score(l, open_rep)
 
     offer = t("l.offer_propose") if l["offer"] == "propose" else t("l.offer_cherche")
-    st.markdown(
+    ui.render(
         f"""
         <div class="k-top" style="display:flex;gap:.4rem;flex-wrap:wrap">
             <span class="k-pill type">{L.TYPE_ICONS.get(l['listing_type'], '🏠')} {html.escape(l['listing_type'])}</span>
             <span class="k-pill offer">{html.escape(offer)}</span>
-            <span class="k-pill" style="background:#f5f5f4;color:#57534e">🛋 {t('l.furnished') if l['furnished'] else t('l.unfurnished')}</span>
+            <span class="k-pill furn">🛋 {t('l.furnished') if l['furnished'] else t('l.unfurnished')}</span>
             {'<span class="k-pill charges">💡 ' + t('l.charges_incl') + '</span>' if l['charges_incl'] else '<span class="k-pill warn">⚡ ' + t('l.charges_extra') + '</span>'}
         </div>
         <h2 style="margin:.7rem 0 .2rem">{html.escape(l['title'])}</h2>
         <div class="k-price" style="font-size:1.6rem">{L.fmt_mad(l['price_mad'])}<span> {t('l.per_month')}</span></div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     loc = f"📍 {l['city']}" + (f" — {l['quartier']}" if l.get("quartier") else "")
@@ -76,7 +75,7 @@ def open_listing(listing_id: int) -> None:
     score_html = ui.trust_bar(score)
     verified = ui.owner_badge(l["owner_verified"], l.get("owner_type"))
     n_owner = len(L.my_listings(l["owner_id"]))
-    st.markdown(
+    ui.render(
         f"""
         <div class="k-card" style="box-shadow:none;background:#fdfaf4">
             <div class="k-top">
@@ -86,8 +85,7 @@ def open_listing(listing_id: int) -> None:
             <div style="margin-top:.5rem">{score_html}</div>
             {('<div class="k-mini" style="margin-top:.4rem">📞 ' + html.escape(l['contact_phone']) + '</div>') if l.get('contact_phone') else ''}
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     st.divider()
@@ -204,7 +202,7 @@ else:
         cols = st.columns(len(row))
         for col, l in zip(cols, row):
             with col:
-                st.markdown(ui.listing_card(l), unsafe_allow_html=True)
+                ui.render(ui.listing_card(l))
                 bc1, bc2 = st.columns([1.4, 1])
                 with bc1:
                     if st.button(f"👁 {t('l.details')}", key=f"det_{l['id']}",
