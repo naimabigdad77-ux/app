@@ -40,7 +40,11 @@ with reg_tab:
             email = st.text_input(t("a.email"), key="rg_email", placeholder=t("a.email_ph"))
             phone = st.text_input(t("a.phone"), key="rg_phone", placeholder="06 XX XX XX XX")
         with c2:
-            university = st.selectbox(t("a.university"), UNIVERSITIES, key="rg_uni")
+            if account_type == "etudiant":
+                university = st.selectbox(t("a.university"), UNIVERSITIES, key="rg_uni")
+            else:
+                university = None
+                st.empty()
             city = st.selectbox(t("a.city"), CITIES, key="rg_city")
             pwd = st.text_input(t("a.password"), type="password", key="rg_pwd")
             pwd2 = st.text_input(t("a.password2"), type="password", key="rg_pwd2")
