@@ -188,8 +188,8 @@ FR = {
 
     # --- Vérification ---
     "v.title": "Vérification du statut étudiant",
-    "v.sub": "Un compte vérifié inspire confiance et reçoit plus de réponses.",
-    "v.ok": "✅ Statut étudiant vérifié — tu as le badge vérifié.",
+    "v.sub": "Vérifie ton compte avec le code envoyé dans l'app pour obtenir le badge vérifié.",
+    "v.ok": "✅ Compte vérifié — tu as le badge vérifié.",
     "v.pending": "📩 Un code de vérification à 6 chiffres a été généré pour {email}.",
     "v.code": "Code reçu",
     "v.code_ph": "123456",
@@ -461,8 +461,8 @@ ARY = {
 
     # --- Vérification ---
     "v.title": "تأكيد وضعية الطالب",
-    "v.sub": "الحساب الموثوق كيعطي ثقة وكياخد ردود كثر.",
-    "v.ok": "✅ وضعية الطالب موثوقة — عندك البادج ديال التوثيق.",
+    "v.sub": "أكّد حسابك بالكود لي كيظهر هنا باش تاخد البادج ديال التوثيق.",
+    "v.ok": "✅ الحساب موثوق — عندك بادج التوثيق.",
     "v.get": "طلب كود التوثيق",
     "v.pending": "📩 تولّد كود ديال 6 أرقام لـ {email}.",
     "v.code": "الكود لي توصلتي بيه",

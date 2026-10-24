@@ -101,10 +101,9 @@ def register(
         return False, t("a.err_short")
     if password != password2:
         return False, t("a.err_match")
-    # Seuls les comptes « étudiant » doivent prouver leur statut via un e-mail @ac.ma.
-    # Les propriétaires et agents s'inscrivent avec n'importe quelle adresse valide.
-    if account_type == "etudiant" and not is_academic_email(email):
-        return False, t("a.err_domain")
+    # N'importe quel e-mail valide est accepté (étudiants ou propriétaires/agents).
+    if account_type not in ("etudiant", "proprietaire"):
+        account_type = "etudiant"
 
     conn = db.get_conn()
     if conn.execute("SELECT 1 FROM users WHERE lower(email) = ?", (email,)).fetchone():
@@ -143,7 +142,7 @@ def request_verification_code(user_id: int) -> str | None:
         conn = db.get_conn()
         row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
         user = dict(row) if row else None
-    if not user or not is_academic_email(user["email"]):
+    if not user:
         return None
     if user.get("account_type") == "proprietaire":
         return None
@@ -165,8 +164,6 @@ def request_verification_code(user_id: int) -> str | None:
     if not row:
         return False
     if row["account_type"] == "proprietaire" or row["is_verified"]:
-        return False
-    if not is_academic_email(row["email"]):
         return False
     if not user or not user.get("verify_code"):
         return False

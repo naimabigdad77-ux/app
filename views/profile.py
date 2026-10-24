@@ -44,8 +44,6 @@ if user["is_verified"]:
     ui.alert(t("v.ok"), kind="ok")
 elif user.get("account_type") == "proprietaire":
     ui.alert(t("v.owner_info"), kind="info")
-elif not auth.is_academic_email(user["email"]):
-    ui.alert(t("v.not_eligible"))
 else:
     if st.session_state.get("vcode") is None:
         st.session_state["vcode"] = auth.request_verification_code(user["id"])
