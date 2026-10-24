@@ -38,19 +38,18 @@ st.write("")
 # --------------------------------------------------------------------------- #
 # Vérification du statut étudiant
 # --------------------------------------------------------------------------- #
-if user["is_verified"]:
-    ui.alert(t("v.ok"), kind="ok")
-elif user.get("account_type") == "proprietaire":
+if user.get("account_type") == "proprietaire":
     ui.alert(t("v.owner_info"), kind="info")
 else:
     ui.alert(t("v.ok"), kind="ok")
-    try:
-        conn = db.get_conn()
-        conn.execute("UPDATE users SET is_verified = 1 WHERE id = ?", (user["id"],))
-        conn.commit()
-        st.rerun()
-    except Exception:
-        pass
+    if not user["is_verified"]:
+        try:
+            conn = db.get_conn()
+            conn.execute("UPDATE users SET is_verified = 1 WHERE id = ?", (user["id"],))
+            conn.commit()
+            st.rerun()
+        except Exception:
+            pass
 
 # --------------------------------------------------------------------------- #
 # Informations
@@ -61,12 +60,15 @@ with st.form("profile_form"):
     with c1:
         name = st.text_input(t("a.name"), value=user["full_name"], key="pf_name")
         phone = st.text_input(t("a.phone"), value=user.get("phone") or "", key="pf_phone")
-        university = st.selectbox(
-            t("a.university"), UNIVERSITIES,
-            index=UNIVERSITIES.index(user["university"]) if user.get("university") in UNIVERSITIES
-            else len(UNIVERSITIES) - 1,
-            key="pf_uni",
-        )
+        if user.get("account_type") == "etudiant":
+            university = st.selectbox(
+                t("a.university"), UNIVERSITIES,
+                index=UNIVERSITIES.index(user["university"]) if user.get("university") in UNIVERSITIES
+                else len(UNIVERSITIES) - 1,
+                key="pf_uni",
+            )
+        else:
+            university = user.get("university")
     with c2:
         city = st.selectbox(
             t("a.city"), CITIES,
@@ -78,9 +80,13 @@ with st.form("profile_form"):
 
 if saved:
     conn = db.get_conn()
+    if user.get("account_type") == "proprietaire":
+        uni = user.get("university")
+    else:
+        uni = university
     conn.execute(
         "UPDATE users SET full_name=?, phone=?, university=?, city=?, bio=? WHERE id=?",
-        (name.strip(), phone.strip(), university, city, bio.strip(), user["id"]),
+        (name.strip(), phone.strip(), uni, city, bio.strip(), user["id"]),
     )
     conn.commit()
     ui.flash(t("pr.saved"))
