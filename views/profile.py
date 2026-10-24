@@ -47,25 +47,38 @@ elif user.get("account_type") == "proprietaire":
 elif not auth.is_academic_email(user["email"]):
     ui.alert(t("v.not_eligible"))
 else:
-    with st.expander(f"🎓 {t('v.get')}", expanded=st.session_state.get("vcode") is None):
-        if st.button(t("v.get"), key="req_code"):
-            st.session_state["vcode"] = auth.request_verification_code(user["id"])
-            st.rerun()
+    if st.session_state.get("vcode") is None:
+        st.session_state["vcode"] = auth.request_verification_code(user["id"])
+        st.rerun()
+    with st.container(border=True):
+        st.markdown(f"**{t('v.pending', email=user['email'])}**")
+        st.caption(t("v.demo"))
         code = st.session_state.get("vcode")
         if code:
-            st.info(t("v.pending", email=user["email"]))
-            ui.alert(f"{t('v.demo')} — **{code}**")
-            cc1, cc2 = st.columns([2, 1])
-            with cc1:
-                typed = st.text_input(t("v.code"), key="v_input", placeholder=t("v.code_ph"))
-            with cc2:
-                if st.button(t("v.verify"), type="primary", use_container_width=True):
-                    if auth.confirm_verification_code(user["id"], typed):
-                        st.session_state.pop("vcode", None)
-                        ui.flash(t("v.verified"))
-                        st.rerun()
-                    else:
-                        st.error(t("v.wrong"))
+            st.code(code, language=None)
+            cpy1, cpy2 = st.columns([1, 1])
+            with cpy1:
+                if st.button(f"📋 {t('v.copy')}", use_container_width=True):
+                    st.session_state["vcode_copied"] = True
+                    st.toast(t("v.copied"))
+            with cpy2:
+                if st.button(f"🔁 {t('v.resend')}", use_container_width=True):
+                    st.session_state["vcode"] = auth.request_verification_code(user["id"])
+                    st.session_state.pop("vcode_copied", None)
+                    st.rerun()
+        cc1, cc2 = st.columns([2, 1])
+        with cc1:
+            typed = st.text_input(t("v.code"), key="v_input", placeholder=t("v.code_ph"))
+        with cc2:
+            st.write("")
+            if st.button(t("v.verify"), type="primary", use_container_width=True):
+                if auth.confirm_verification_code(user["id"], typed):
+                    st.session_state.pop("vcode", None)
+                    st.session_state.pop("vcode_copied", None)
+                    ui.flash(t("v.verified"))
+                    st.rerun()
+                else:
+                    st.error(t("v.wrong"))
 
 # --------------------------------------------------------------------------- #
 # Informations

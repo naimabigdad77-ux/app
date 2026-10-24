@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 import re
 from datetime import datetime, timedelta
+from time import time
 
 import streamlit as st
 
@@ -13,6 +14,38 @@ from .db import ACADEMIC_DOMAINS
 from .i18n import t
 
 CODE_TTL_MINUTES = 15
+
+_CACHE = {}
+
+
+def cached_get_conn():
+    """Utilise la connexion en session_state (déjà mise en cache par db.get_conn)."""
+    return db.get_conn()
+
+
+def _get_cache(key: str):
+    item = _CACHE.get(key)
+    if not item:
+        return None
+    val, ts = item
+    if time() - ts > 120:
+        _CACHE.pop(key, None)
+        return None
+    return val
+
+
+def _set_cache(key: str, val):
+    _CACHE[key] = (val, time())
+    return val
+
+
+def clear_cache(prefix: str | None = None):
+    if prefix is None:
+        _CACHE.clear()
+        return
+    for k in list(_CACHE.keys()):
+        if k.startswith(prefix):
+            _CACHE.pop(k, None)
 
 
 # --------------------------------------------------------------------------- #
@@ -35,9 +68,6 @@ def _valid_email(email: str) -> bool:
     return re.match(r"^[^@\s]+@[^@\s]+\.[a-z]{2,}$", (email or "").strip().lower()) is not None
 
 
-# --------------------------------------------------------------------------- #
-# Actions
-# --------------------------------------------------------------------------- #
 def login(email: str, password: str) -> tuple[bool, str]:
     conn = db.get_conn()
     row = conn.execute(
@@ -108,7 +138,16 @@ def delete_account(user_id: int) -> None:
 # --------------------------------------------------------------------------- #
 def request_verification_code(user_id: int) -> str | None:
     """Génère et stocke un code à 6 chiffres. Retourne le code (mode démo)."""
-    if not is_academic_email(current_user()["email"]):
+    user = current_user()
+    if not user or user.get("id") != user_id:
+        conn = db.get_conn()
+        row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        user = dict(row) if row else None
+    if not user or not is_academic_email(user["email"]):
+        return None
+    if user.get("account_type") == "proprietaire":
+        return None
+    if user.get("is_verified"):
         return None
     code = f"{random.randint(0, 999999):06d}"
     until = (datetime.now() + timedelta(minutes=CODE_TTL_MINUTES)).isoformat(timespec="seconds")
@@ -120,15 +159,21 @@ def request_verification_code(user_id: int) -> str | None:
     return code
 
 
-def confirm_verification_code(user_id: int, code: str) -> bool:
-    user = current_user()
+    # Si l'e-mail est modifié, s'assurer que la vérification est cohérente
+    conn = db.get_conn()
+    row = conn.execute("SELECT account_type, is_verified, email FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        return False
+    if row["account_type"] == "proprietaire" or row["is_verified"]:
+        return False
+    if not is_academic_email(row["email"]):
+        return False
     if not user or not user.get("verify_code"):
         return False
     if (code or "").strip() != user["verify_code"]:
         return False
     if datetime.fromisoformat(user["verify_until"]) < datetime.now():
         return False
-    conn = db.get_conn()
     conn.execute(
         "UPDATE users SET is_verified = 1, verify_code = NULL, verify_until = NULL WHERE id = ?",
         (user_id,),
