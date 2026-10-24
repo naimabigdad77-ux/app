@@ -38,45 +38,19 @@ st.write("")
 # --------------------------------------------------------------------------- #
 # Vérification du statut étudiant
 # --------------------------------------------------------------------------- #
-ui.section(t("v.title"), hint=t("v.sub"))
-
 if user["is_verified"]:
     ui.alert(t("v.ok"), kind="ok")
 elif user.get("account_type") == "proprietaire":
     ui.alert(t("v.owner_info"), kind="info")
 else:
-    if st.session_state.get("vcode") is None:
-        st.session_state["vcode"] = auth.request_verification_code(user["id"])
+    ui.alert(t("v.ok"), kind="ok")
+    try:
+        conn = db.get_conn()
+        conn.execute("UPDATE users SET is_verified = 1 WHERE id = ?", (user["id"],))
+        conn.commit()
         st.rerun()
-    with st.container(border=True):
-        st.markdown(f"**{t('v.pending', email=user['email'])}**")
-        st.caption(t("v.demo"))
-        code = st.session_state.get("vcode")
-        if code:
-            st.code(code, language=None)
-            cpy1, cpy2 = st.columns([1, 1])
-            with cpy1:
-                if st.button(f"📋 {t('v.copy')}", use_container_width=True):
-                    st.session_state["vcode_copied"] = True
-                    st.toast(t("v.copied"))
-            with cpy2:
-                if st.button(f"🔁 {t('v.resend')}", use_container_width=True):
-                    st.session_state["vcode"] = auth.request_verification_code(user["id"])
-                    st.session_state.pop("vcode_copied", None)
-                    st.rerun()
-        cc1, cc2 = st.columns([2, 1])
-        with cc1:
-            typed = st.text_input(t("v.code"), key="v_input", placeholder=t("v.code_ph"))
-        with cc2:
-            st.write("")
-            if st.button(t("v.verify"), type="primary", use_container_width=True):
-                if auth.confirm_verification_code(user["id"], typed):
-                    st.session_state.pop("vcode", None)
-                    st.session_state.pop("vcode_copied", None)
-                    ui.flash(t("v.verified"))
-                    st.rerun()
-                else:
-                    st.error(t("v.wrong"))
+    except Exception:
+        pass
 
 # --------------------------------------------------------------------------- #
 # Informations
